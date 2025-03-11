@@ -1,39 +1,76 @@
 <script setup>
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useAPI } from "../composables/useAPI";
 import moment from "moment";
 
 const api = useAPI();
 
+const isLoading = ref(false);
 const dataSource = ref([]);
 const timeFormat = ref("DD/MM/YYYY h:mm A");
+const dateFilter = ref([
+  moment().subtract(7, "days").startOf("days"),
+  moment().endOf("days"),
+]);
+const dateFormat = ref("DD/MM/YYYY");
 
 const paginations = ref({
   page: 1,
-  pageSize: 10,
+  pageSize: 12,
   total: 0,
   pageCount: 0,
 });
 const currentPageGroup = ref(0);
 const newPagination = ref([]);
+const countTotalWeight = ref(0);
+const countTotalWeightMonthly = ref(0);
 
-onMounted(() => {
-  fetchingData();
+onMounted(async () => {
+  await fetchingData();
+  await countWeight();
+  await countWeightMonth();
 });
 
+watch(
+  () => dateFilter.value,
+  async (newDate, oldDate) => {
+    if (newDate) {
+      dataSource.value = [];
+      await fetchingData();
+      await countWeight();
+    }
+  }
+);
+
 const fetchingData = async () => {
+  isLoading.value = true;
+  const startDate = moment(dateFilter.value[0]).startOf("days").toISOString();
+  const endDate = moment(dateFilter.value[1]).endOf("days").toISOString();
   const response = await api.get(`/activities`, {
     params: {
       "populate[0]": "driver",
       "populate[1]": "lorry",
+      filters: {
+        $and: [
+          {
+            createdAt: {
+              $gte: startDate,
+            },
+          },
+          {
+            createdAt: {
+              $lte: endDate,
+            },
+          },
+        ],
+      },
       pagination: {
         page: paginations.value.page,
         pageSize: paginations.value.pageSize,
       },
     },
   });
-  console.log(response.data.data);
-
+  isLoading.value = false;
   if (response.data.data.length > 0) {
     dataSource.value = response.data.data;
     paginations.value = response.data.meta.pagination;
@@ -71,11 +108,13 @@ const onNext = async () => {
     paginations.value.page = result;
     dataSource.value = [];
     await fetchingData();
+    await countWeight();
   } else {
     currentPageGroup.value = currentPageGroup.value + 1;
     paginations.value.page = result;
     dataSource.value = [];
     await fetchingData();
+    await countWeight();
   }
 };
 
@@ -90,11 +129,13 @@ const onPrevious = async () => {
     paginations.value.page = result;
     dataSource.value = [];
     await fetchingData();
+    await countWeight();
   } else {
     currentPageGroup.value = currentPageGroup.value - 1;
     paginations.value.page = result;
     dataSource.value = [];
     await fetchingData();
+    await countWeight();
   }
 };
 
@@ -112,6 +153,7 @@ const handleClickPage = async (page) => {
   paginations.value.page = page;
   dataSource.value = [];
   await fetchingData();
+  await countWeight();
 };
 
 const handleGotoPreviousGroupedPage = async () => {
@@ -120,6 +162,7 @@ const handleGotoPreviousGroupedPage = async () => {
   paginations.value.page = newPagination.value[result][0];
   dataSource.value = [];
   await fetchingData();
+  await countWeight();
 };
 
 const handleGotoNextGroupedPage = async () => {
@@ -128,11 +171,198 @@ const handleGotoNextGroupedPage = async () => {
   paginations.value.page = newPagination.value[result][0];
   dataSource.value = [];
   await fetchingData();
+  await countWeight();
+};
+
+const dateFormatPicker = (date) => {
+  const startday = moment(date[0]).format("DD");
+  const startmonth = moment(date[0]).format("MM");
+  const startyear = moment(date[0]).format("YYYY");
+
+  const endday = moment(date[1]).format("DD");
+  const endmonth = moment(date[1]).format("MM");
+  const endyear = moment(date[1]).format("YYYY");
+
+  return `${startday}/${startmonth}/${startyear} ~ ${endday}/${endmonth}/${endyear}`;
+};
+
+const downloadCSVFromJSON = async () => {
+  const data = await fetchingDataAll();
+
+  let arrayItem = [];
+  if (!data.length) return;
+  for (let i = 0; i < data.length; i++) {
+    arrayItem.push({
+      NO: i + 1,
+      DRIVER: !data[i].attributes.driver.data
+        ? "-"
+        : data[i].attributes.driver.data.attributes.name.toUpperCase(),
+      LORRY: "-",
+      ["PLATE NUMBER"]: !data[i].attributes.plateNumber
+        ? "-"
+        : data[i].attributes.plateNumber,
+      ["PLATE NUMBER"]: "-",
+      ["WEIGHT IN"]: !data[i].attributes.weight_in
+        ? "-"
+        : data[i].attributes.weight_out,
+      ["WEIGHT OUT"]: !data[i].attributes.weight_out
+        ? "-"
+        : data[i].attributes.weight_in,
+      ["WEIGHT DIFF"]: !data[i].attributes.weight_diff
+        ? "-"
+        : data[i].attributes.weight_diff,
+      ["TIME IN"]: !data[i].attributes.timestamp_in
+        ? "-"
+        : moment(data[i].attributes.timestamp_in).format(timeFormat.value),
+      ["TIME OUT"]: !data[i].attributes.timestamp_out
+        ? "-"
+        : moment(data[i].attributes.timestamp_out).format(timeFormat.value),
+    });
+  }
+  if (!arrayItem.length) return;
+  const headers = Object.keys(arrayItem[0]).join(",");
+  const rows = arrayItem.map((obj) =>
+    Object.values(obj)
+      .map((value) => `"${value}"`)
+      .join(",")
+  );
+
+  const csv = [headers, ...rows].join("\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.setAttribute(
+    "download",
+    `ACTIVITY LOG ${moment(dateFilter.value[0])
+      .startOf("days")
+      .format("DD/MM/YYYY")} - ${moment(dateFilter.value[1])
+      .endOf("days")
+      .format("DD/MM/YYYY")}.csv`
+  );
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
+const fetchingDataAll = async () => {
+  const startDate = moment(dateFilter.value[0]).startOf("days").toISOString();
+  const endDate = moment(dateFilter.value[1]).endOf("days").toISOString();
+  const response = await api.get(`/activities`, {
+    params: {
+      "populate[0]": "driver",
+      "populate[1]": "lorry",
+      filters: {
+        $and: [
+          {
+            createdAt: {
+              $gte: startDate,
+            },
+          },
+          {
+            createdAt: {
+              $lte: endDate,
+            },
+          },
+        ],
+      },
+    },
+  });
+
+  return response.data.data;
 };
 
 const computedArrayPage = computed(() => {
   return newPagination.value[currentPageGroup.value];
 });
+
+const countWeight = async () => {
+  const startDate = moment(dateFilter.value[0]).startOf("days").toISOString();
+  const endDate = moment(dateFilter.value[1]).endOf("days").toISOString();
+  const response = await api.get(`/activities`, {
+    params: {
+      filters: {
+        $and: [
+          {
+            createdAt: {
+              $gte: startDate,
+            },
+          },
+          {
+            createdAt: {
+              $lte: endDate,
+            },
+          },
+        ],
+      },
+      pagination: {
+        page: 1,
+        pageSize: 300,
+      },
+    },
+  });
+
+  const newData = response.data.data;
+
+  // Calculate Weight Total
+  const filteredData = newData.filter((obj) => obj.attributes.weight_in);
+  const calculateWeightTotal = filteredData.reduce(
+    (a, b) => a + b.attributes.weight_in,
+    0
+  );
+  countTotalWeight.value = calculateWeightTotal;
+};
+
+const countWeightMonth = async () => {
+  const monthIndex = moment().format("MM") - 1; // July (0-indexed)
+  const year = moment().format("YYYY");
+
+  // First day of the month
+  const firstDay = moment()
+    .year(year)
+    .month(monthIndex)
+    .startOf("month")
+    .toISOString();
+
+  // Last day of the month
+  const lastDay = moment()
+    .year(year)
+    .month(monthIndex)
+    .endOf("month")
+    .toISOString();
+
+  const response = await api.get(`/activities`, {
+    params: {
+      filters: {
+        $and: [
+          {
+            createdAt: {
+              $gte: firstDay,
+            },
+          },
+          {
+            createdAt: {
+              $lte: lastDay,
+            },
+          },
+        ],
+      },
+      pagination: {
+        page: 1,
+        pageSize: 300,
+      },
+    },
+  });
+
+  const newData = response.data.data;
+
+  // Calculate Weight Total
+  const filteredData = newData.filter((obj) => obj.attributes.weight_in);
+  const calculateWeightTotal = filteredData.reduce(
+    (a, b) => a + b.attributes.weight_in,
+    0
+  );
+  countTotalWeightMonthly.value = calculateWeightTotal;
+};
 </script>
 
 <template>
@@ -140,15 +370,34 @@ const computedArrayPage = computed(() => {
     <div class="box-top py-3">
       <div class="box-action mb-2 d-flex justify-content-between">
         <h2>&nbsp;</h2>
-        <button class="btn btn-primary">
-          Export Data
-          <font-awesome-icon :icon="['fas', 'download']" class="ms-2" />
-        </button>
+        <div class="d-flex align-items-center">
+          <VueDatePicker
+            range
+            v-model="dateFilter"
+            :format="dateFormatPicker"
+            :dark="true"
+            :clearable="false"
+            :enable-time-picker="false"
+          />
+          <button
+            class="btn btn-primary btn-sm ms-2"
+            :disabled="dataSource.length === 0"
+            style="width: 250px"
+            @click="downloadCSVFromJSON"
+          >
+            Export Data
+            <font-awesome-icon
+              :icon="['fas', 'download']"
+              size="sm"
+              class="ms-2"
+            />
+          </button>
+        </div>
       </div>
       <div class="box-dashboard border-bottom pb-3">
         <div class="row">
           <div class="col">
-            <div class="card bg-primary-light">
+            <div class="card bg-primary-light border-0">
               <div class="card-body">
                 <p class="mb-1 text-primary small">Total Weight</p>
                 <div class="d-flex align-items-center">
@@ -156,22 +405,24 @@ const computedArrayPage = computed(() => {
                     :icon="['fas', 'scale-balanced']"
                     class="me-2"
                   />
-                  <h2 class="fw-bold me-2">123</h2>
+                  <h2 class="fw-bold me-2">{{ countTotalWeight }}</h2>
                   <p class="mb-0">kg</p>
                 </div>
               </div>
             </div>
           </div>
           <div class="col">
-            <div class="card bg-primary-light">
+            <div class="card bg-primary-light border-0">
               <div class="card-body">
-                <p class="mb-1 text-primary small">Total Weight Monthly</p>
+                <p class="mb-1 text-primary small">
+                  Total Weight in {{ moment().format("MMMM") }}
+                </p>
                 <div class="d-flex align-items-center">
                   <font-awesome-icon
                     :icon="['fas', 'scale-balanced']"
                     class="me-2"
                   />
-                  <h2 class="fw-bold me-2">123</h2>
+                  <h2 class="fw-bold me-2">{{ countTotalWeightMonthly }}</h2>
                   <p class="mb-0">kg</p>
                 </div>
               </div>
@@ -180,7 +431,7 @@ const computedArrayPage = computed(() => {
         </div>
       </div>
       <div class="box-table py-3">
-        <table class="table table-sm">
+        <table class="table table-sm" id="myTable">
           <thead>
             <tr>
               <th>NO</th>
@@ -192,11 +443,15 @@ const computedArrayPage = computed(() => {
               <th>WEIGHT DIFFERENT</th>
               <th>TIME IN</th>
               <th>TIME OUT</th>
-              <th>ACTION(S)</th>
+              <!-- <th>ACTION(S)</th> -->
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(data, index) in dataSource" :key="index">
+            <tr
+              v-for="(data, index) in dataSource"
+              :key="index"
+              class="align-middle"
+            >
               <td>{{ index + 1 }}.</td>
               <td class="text-capitalize">
                 {{
@@ -215,19 +470,23 @@ const computedArrayPage = computed(() => {
               </td>
               <td>
                 {{
-                  !data.attributes.weight_in ? "-" : data.attributes.weight_in
+                  !data.attributes.weight_in
+                    ? "-"
+                    : data.attributes.weight_in + "kg"
                 }}
               </td>
               <td>
                 {{
-                  !data.attributes.weight_out ? "-" : data.attributes.weight_out
+                  !data.attributes.weight_out
+                    ? "-"
+                    : data.attributes.weight_out + "kg"
                 }}
               </td>
               <td>
                 {{
                   !data.attributes.weight_diff
                     ? "-"
-                    : data.attributes.weight_diff
+                    : data.attributes.weight_diff + "kg"
                 }}
               </td>
               <td>
@@ -244,7 +503,7 @@ const computedArrayPage = computed(() => {
                     : moment(data.attributes.timestamp_out).format(timeFormat)
                 }}
               </td>
-              <td>
+              <!-- <td>
                 <button class="btn">
                   <font-awesome-icon :icon="['fas', 'list']" />
                 </button>
@@ -254,10 +513,15 @@ const computedArrayPage = computed(() => {
                 <button class="btn">
                   <font-awesome-icon :icon="['fas', 'trash']" />
                 </button>
-              </td>
+              </td> -->
             </tr>
           </tbody>
         </table>
+        <div class="m-auto my-5" style="width: 30px" v-if="isLoading">
+          <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+        </div>
         <div
           class="mt-4 d-flex w-100 justify-content-end"
           v-if="dataSource.length"
@@ -271,7 +535,13 @@ const computedArrayPage = computed(() => {
                   'page-item': true,
                 }"
               >
-                <a class="page-link" href="#" @click="onPrevious">Previous</a>
+                <a
+                  class="page-link"
+                  style="cursor: pointer"
+                  href="#"
+                  @click="onPrevious"
+                  >Previous</a
+                >
               </li>
               <li
                 class="page-item"
@@ -283,7 +553,13 @@ const computedArrayPage = computed(() => {
                   'page-item': true,
                 }"
               >
-                <a class="page-link" href="#" @click="handleClickPage(1)">1</a>
+                <a
+                  class="page-link"
+                  style="cursor: pointer"
+                  href="#"
+                  @click="handleClickPage(1)"
+                  >1</a
+                >
               </li>
               <li
                 class="page-item"
@@ -294,6 +570,7 @@ const computedArrayPage = computed(() => {
                 <a
                   class="page-link"
                   href="#"
+                  style="cursor: pointer"
                   @click="handleGotoPreviousGroupedPage"
                   >...</a
                 >
@@ -305,6 +582,7 @@ const computedArrayPage = computed(() => {
               >
                 <a
                   class="page-link"
+                  style="cursor: pointer"
                   :class="{
                     active: paginations.page === page,
                   }"
@@ -318,7 +596,11 @@ const computedArrayPage = computed(() => {
                   disabled: currentPageGroup === newPagination.length - 1,
                 }"
               >
-                <a class="page-link" href="#" @click="handleGotoNextGroupedPage"
+                <a
+                  class="page-link"
+                  style="cursor: pointer"
+                  href="#"
+                  @click="handleGotoNextGroupedPage"
                   >...</a
                 >
               </li>
@@ -333,6 +615,7 @@ const computedArrayPage = computed(() => {
                 }"
               >
                 <a
+                  style="cursor: pointer"
                   class="page-link"
                   href="#"
                   @click="handleClickPage(paginations.pageCount)"
@@ -346,7 +629,13 @@ const computedArrayPage = computed(() => {
                   disabled: paginations.page === paginations.pageCount,
                 }"
               >
-                <a class="page-link" href="#" @click="onNext">Next</a>
+                <a
+                  style="cursor: pointer"
+                  class="page-link"
+                  href="#"
+                  @click="onNext"
+                  >Next</a
+                >
               </li>
             </ul>
           </nav>

@@ -22,7 +22,8 @@ body {
 }
 
 .btn-main {
-    background-color: #073F01;;
+    background-color: #073F01;
+    ;
 }
 
 #map {
@@ -401,6 +402,17 @@ body {
     background-image: url(../assets/images/mapStyle2.png);
 }
 
+[data-bs-theme="dark"] .navbar {
+    background-color: #1c1f23 !important
+}
+
+[data-bs-theme="dark"] .text-primary {
+    color: #b2b2b2 !important
+}
+
+[data-bs-theme="dark"] .bg-primary-light {
+    background-color: #1c1f23 !important
+}
 
 
 [data-bs-theme="dark"] .box-map-current-style {
