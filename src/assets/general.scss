@@ -1,0 +1,484 @@
+.navbar {
+    background: #F0F6EF !important;
+
+}
+
+.bg-primary-light {
+    background: #F0F6EF;
+}
+
+.dropdown {
+    .dropdown-menu {
+        padding: $dropdown-padding-x;
+    }
+
+    .dropdown-item {
+        @extend .rounded;
+    }
+}
+
+body {
+    font-size: 0.935rem;
+}
+
+.btn-main {
+    background-color: #073F01;;
+}
+
+#map {
+    // height: calc(100vh - 66px); //100%;//
+    height: 100%;
+    width: 100%;
+}
+
+.v-select__selection,
+.v-select__selection--comma,
+.v-select.v-text-field input {
+    color: blue !important;
+}
+
+.marker {
+    // display: block;
+    border: none;
+    border-radius: 10%;
+    cursor: pointer;
+    padding: 0;
+    position: relative;
+
+    &.colored {
+        &::after {
+            border-top: 5px solid #ef5261;
+        }
+    }
+
+    &.colored-green {
+        &::after {
+            border-top: 5px solid #43b677;
+        }
+    }
+
+    &.colored-white {
+        &::after {
+            border-top: 5px solid #ffffff;
+        }
+    }
+
+    &.colored-blue {
+        &::after {
+            border-top: 5px solid #138dff;
+        }
+    }
+
+    &::after {
+        position: absolute;
+        content: '';
+        border-top: 5px solid #6c757d;
+        border-left: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        border-right: 5px solid transparent;
+        top: 100%;
+        left: 50%;
+        transform: translate(-50%, 0);
+        display: block;
+    }
+}
+
+.mapboxgl-map {
+    -webkit-tap-highlight-color: rgb(0 0 0 / 0);
+    font:
+        12px / 20px Helvetica Neue,
+        Arial,
+        Helvetica,
+        sans-serif;
+    // overflow: hidden;
+    position: relative;
+}
+
+.mapboxgl-control-container {
+    display: none;
+}
+
+.aspect-ratio-16-9 {
+    aspect-ratio: 16/9;
+}
+
+.fill-screen {
+    height: calc(100vh - 66px);
+}
+
+.bg-white {
+    background-color: #ffffff !important;
+    color: #000 !important;
+}
+
+.bg-silver {
+    background-image: linear-gradient(51deg, #e2e2e2, #ccc 18.07%, rgb(230 230 230) 33.61%, #ccc 50.84%, rgb(228 228 228) 66.81%, #ccc 83.61%, #e7e7e7) !important;
+    color: #000 !important;
+}
+
+.bg-grey {
+    background-color: #949494 !important;
+    color: #000 !important;
+}
+
+.bg-black {
+    background-color: #000 !important;
+    color: #fff !important;
+}
+
+.bg-blue {
+    background-color: #0845ff !important;
+    color: #fff !important;
+}
+
+.bg-yellow {
+    background-color: #fcdf00 !important;
+    color: #000 !important;
+}
+
+.bg-red {
+    background-color: #ff0000 !important;
+    color: #fff !important;
+}
+
+.bg-orange {
+    background-color: #ff8c00 !important;
+    color: #000 !important;
+}
+
+.bg-purple {
+    background-color: #7b00ff !important;
+    color: #fff !important;
+}
+
+.bg-gold {
+    background-color: #ffbf00 !important;
+    color: #000 !important;
+}
+
+.bg-green {
+    background-color: #20d529 !important;
+    color: #000 !important;
+}
+
+.bg-all {
+    background-image: linear-gradient(#ff0000, #7b00ff, #0845ff, #ff8c00, #ffbf00, #fcdf00);
+}
+
+.vehicle-modal-title {
+    @media (max-width: 1080px) and (max-height: 768px) {
+        font-size: 0.6rem !important;
+    }
+
+    @media (max-width: 1280px) and (max-height: 800px) {
+        font-size: 0.8rem !important;
+    }
+
+    @media (max-width: 1280px) and (max-height: 1024px) {
+        font-size: 0.8rem !important;
+    }
+}
+
+.vehicle-modal-badge {
+    @media (max-width: 1080px) and (max-height: 768px) {
+        font-size: 0.45rem !important;
+    }
+
+    @media (max-width: 1280px) and (max-height: 800px) {
+        font-size: 0.6rem !important;
+    }
+
+    @media (max-width: 1280px) and (max-height: 1024px) {
+        font-size: 0.5rem !important;
+    }
+}
+
+.x-small {
+    font-size: 0.555rem;
+}
+
+.is-cursor {
+    cursor: pointer !important;
+}
+
+// MapView Style
+.map-container {
+    @extend .rounded-2;
+    @extend .shadow-sm;
+    @extend .overflow-hidden;
+    @extend .bg-black;
+
+    height: calc(100vh - 100px);
+}
+
+.img-container {
+    @extend .rounded-circle;
+    @extend .shadow-sm;
+    @extend .me-3;
+
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    &.pbt {
+        background-image: url(./images/PBT.png);
+    }
+
+    &.vehicle {
+        background-image: url(./images/Daily_Vehicle.png);
+    }
+
+    &.camera {
+        background-image: url(./images/Camera.png);
+    }
+
+    &.camera-online {
+        background-image: url(./images/Camera_Online.png);
+    }
+
+    &.camera-offline {
+        background-image: url(./images/Camera_Offline.png);
+    }
+
+    &.detection {
+        background-image: url(./images/Detection.png);
+    }
+}
+
+.card-container {
+    @extend .my-1;
+    @extend .px-1;
+
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    width: 100vw;
+    height: 70px;
+
+    .card-5 {
+        @extend .mx-1;
+
+        width: calc(100% / 5);
+
+        .img-container {
+            height: 40px;
+            width: 40px;
+        }
+    }
+
+    .card-3 {
+        @extend .mx-1;
+
+        width: calc(117.65% / 4);
+
+        .img-container {
+            height: 40px;
+            width: 40px;
+        }
+    }
+}
+
+.card-container-bottom {
+    @extend .position-relative;
+    @extend .d-flex;
+    @extend .justify-content-between;
+    // @extend .py-1;
+    @extend .px-1;
+
+    .dashboard-container {
+        @extend .mx-1;
+        // height: calc((100vh - 66px - 140px));
+        width: calc(100vw / 5 * 2);
+
+        .img-container {
+            height: 40px;
+            width: 40px;
+            background-origin: content-box;
+            padding: 10px;
+        }
+    }
+
+    .map-container {
+        @extend .mx-1;
+        height: calc((100vh - 66px - 100px));
+        width: calc(100vw / 5 * 3);
+    }
+}
+
+.filter-header {
+    @extend .d-flex;
+    @extend .align-items-center;
+    @extend .justify-content-between;
+
+    .img-container {
+        height: 40px;
+        width: 40px;
+        background-origin: content-box;
+        padding: 10px;
+    }
+}
+
+.file-box {
+    width: 100px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: $light;
+    border-radius: 0.3rem;
+    color: $dark;
+    border-style: solid;
+    border-color: $secondary;
+    border-width: 1px;
+
+    span {
+        font-size: 0.8rem;
+    }
+
+    &.file-upload {
+        border-style: dashed;
+
+        &:hover {
+            opacity: 0.8;
+            cursor: pointer;
+        }
+    }
+}
+
+.is-hover-map {
+    &:hover {
+        .button-map {
+            display: none;
+        }
+
+        .button-group-map {
+            display: flex;
+        }
+    }
+}
+
+.button-group-map {
+    display: none;
+}
+
+.border-active {
+    border: 2px solid rgb(27, 61, 199) !important;
+}
+
+.box-map-current-style {
+    // background-color: rgb(245, 245, 248);
+    height: 50px;
+    width: 50px;
+    border: 2px solid rgb(218, 220, 235);
+    cursor: pointer;
+}
+
+.box-map-style {
+    background-color: rgb(245, 245, 248);
+    height: 50px;
+    width: 50px;
+    border: 2px solid rgb(218, 220, 235);
+    cursor: pointer;
+
+    &:hover {
+        border: 2px solid rgb(74, 77, 89);
+    }
+
+
+}
+
+.bg-style {
+    background-color: rgb(245, 245, 248);
+    cursor: pointer;
+}
+
+.map-1 {
+    background-image: url(../assets/images/mapStyle1.png);
+}
+
+.map-2 {
+    background-image: url(../assets/images/mapStyle2.png);
+}
+
+
+
+[data-bs-theme="dark"] .box-map-current-style {
+    @extend .border-secondary
+}
+
+[data-bs-theme="dark"] .box-map-style {
+    @extend .border-secondary
+}
+
+[data-bs-theme="dark"] .bg-style {
+    @extend .bg-dark
+}
+
+[data-bs-theme="dark"] .map-1 {
+    background-image: url(../assets/images/mapStyle1.png);
+}
+
+[data-bs-theme="dark"] .border-active {
+    border: 2px solid rgb(27, 61, 199) !important;
+}
+
+[data-bs-theme="dark"] .dp__theme_dark {
+    --dp-background-color: #212529;
+    --dp-text-color: #fff;
+    --dp-hover-color: #484848;
+    --dp-hover-text-color: #fff;
+    --dp-hover-icon-color: #959595;
+    --dp-primary-color: #005cb2;
+    --dp-primary-disabled-color: #61a8ea;
+    --dp-primary-text-color: #fff;
+    --dp-secondary-color: #a9a9a9;
+    --dp-border-color: #40454c;
+    --dp-menu-border-color: #2d2d2d;
+    --dp-border-color-hover: #aaaeb7;
+    --dp-border-color-focus: #aaaeb7;
+    --dp-disabled-color: #737373;
+    --dp-disabled-color-text: #d0d0d0;
+    --dp-scroll-bar-background: #212529;
+    --dp-scroll-bar-color: #484848;
+    --dp-success-color: #00701a;
+    --dp-success-color-disabled: #428f59;
+    --dp-icon-color: #959595;
+    --dp-danger-color: #e53935;
+    --dp-marker-color: #e53935;
+    --dp-tooltip-color: #3e3e3e;
+    --dp-highlight-color: rgb(0 92 178 / 20%);
+    --dp-range-between-dates-background-color: var(--dp-hover-color, #212529);
+    --dp-range-between-dates-text-color: var(--dp-hover-text-color, #fff);
+    --dp-range-between-border-color: var(--dp-hover-color, #40454c);
+}
+
+[data-bs-theme="light"] .dp__theme_dark {
+    --dp-background-color: #fff;
+    --dp-text-color: #212121;
+    --dp-hover-color: #f3f3f3;
+    --dp-hover-text-color: #212121;
+    --dp-hover-icon-color: #959595;
+    --dp-primary-color: #1976d2;
+    --dp-primary-disabled-color: #6bacea;
+    --dp-primary-text-color: #f8f5f5;
+    --dp-secondary-color: #c0c4cc;
+    --dp-border-color: #ddd;
+    --dp-menu-border-color: #ddd;
+    --dp-border-color-hover: #aaaeb7;
+    --dp-border-color-focus: #aaaeb7;
+    --dp-disabled-color: #f6f6f6;
+    --dp-scroll-bar-background: #f3f3f3;
+    --dp-scroll-bar-color: #959595;
+    --dp-success-color: #76d275;
+    --dp-success-color-disabled: #a3d9b1;
+    --dp-icon-color: #959595;
+    --dp-danger-color: #ff6f60;
+    --dp-marker-color: #ff6f60;
+    --dp-tooltip-color: #fafafa;
+    --dp-disabled-color-text: #8e8e8e;
+    --dp-highlight-color: rgb(25 118 210 / 10%);
+    --dp-range-between-dates-background-color: var(--dp-hover-color, #f3f3f3);
+    --dp-range-between-dates-text-color: var(--dp-hover-text-color, #212121);
+    --dp-range-between-border-color: var(--dp-hover-color, #f3f3f3);
+}
