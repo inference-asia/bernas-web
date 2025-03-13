@@ -2,9 +2,12 @@
 import { computed, onMounted, ref, watch } from "vue";
 import { useAPI } from "../composables/useAPI";
 import moment from "moment";
+import ViewActivityVue from "@/modal/ViewActivity.vue";
 
 const api = useAPI();
 
+const showModalViewData = ref(false);
+const selectedData = ref(null);
 const isLoading = ref(false);
 const dataSource = ref([]);
 const timeFormat = ref("DD/MM/YYYY h:mm A");
@@ -364,6 +367,11 @@ const countWeightMonth = async () => {
   );
   countTotalWeightMonthly.value = calculateWeightTotal;
 };
+
+const handleViewDetails = (data) => {
+  showModalViewData.value = true;
+  selectedData.value = data;
+};
 </script>
 
 <template>
@@ -504,9 +512,12 @@ const countWeightMonth = async () => {
                     : moment(data.attributes.timestamp_out).format(timeFormat)
                 }}
               </td>
-              <!-- <td>
+              <td>
                 <button class="btn">
-                  <font-awesome-icon :icon="['fas', 'list']" />
+                  <font-awesome-icon
+                    :icon="['fas', 'list']"
+                    @click="handleViewDetails(data)"
+                  />
                 </button>
                 <button class="btn">
                   <font-awesome-icon :icon="['fas', 'download']" />
@@ -514,7 +525,7 @@ const countWeightMonth = async () => {
                 <button class="btn">
                   <font-awesome-icon :icon="['fas', 'trash']" />
                 </button>
-              </td> -->
+              </td>
             </tr>
           </tbody>
         </table>
@@ -643,5 +654,10 @@ const countWeightMonth = async () => {
         </div>
       </div>
     </div>
+    <ViewActivityVue
+      v-if="showModalViewData"
+      :data="selectedData"
+      @close="showModalViewData = false"
+    />
   </div>
 </template>
