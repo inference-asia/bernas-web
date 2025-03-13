@@ -452,7 +452,7 @@ const handleViewDetails = (data) => {
               <th>WEIGHT DIFFERENT</th>
               <th>TIME IN</th>
               <th>TIME OUT</th>
-              <!-- <th>ACTION(S)</th> -->
+              <th>ACTION(S)</th>
             </tr>
           </thead>
           <tbody>
@@ -519,12 +519,12 @@ const handleViewDetails = (data) => {
                     @click="handleViewDetails(data)"
                   />
                 </button>
-                <button class="btn">
+                <!-- <button class="btn">
                   <font-awesome-icon :icon="['fas', 'download']" />
                 </button>
                 <button class="btn">
                   <font-awesome-icon :icon="['fas', 'trash']" />
-                </button>
+                </button> -->
               </td>
             </tr>
           </tbody>
