@@ -50,6 +50,7 @@ const fetchingData = async () => {
     params: {
       "populate[0]": "driver",
       "populate[1]": "lorry",
+      sort: "createdAt:DESC",
       filters: {
         $and: [
           {
