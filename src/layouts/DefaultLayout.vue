@@ -100,15 +100,10 @@ function performLogout() {
               Dashboard
             </a>
           </li>
-          <li class="nav-item me-3" v-if="clients.length">
-            <a
-              class="nav-link"
-              :href="`main/${clients[0].id}/analytics?client=all`"
-              ><font-awesome-icon
-                :icon="['fas', 'chart-column']"
-                class="me-2"
-              />
-              Analytics
+          <li class="nav-item me-3">
+            <a class="nav-link" :href="`driver`">
+              <font-awesome-icon :icon="['fas', 'id-card']" class="me-2" />
+              Driver
             </a>
           </li>
         </ul>

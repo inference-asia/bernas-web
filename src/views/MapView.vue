@@ -372,6 +372,11 @@ const handleViewDetails = (data) => {
   showModalViewData.value = true;
   selectedData.value = data;
 };
+
+const handleClose = () => {
+  showModalViewData.value = false;
+  selectedData.value = null;
+};
 </script>
 
 <template>
@@ -657,7 +662,7 @@ const handleViewDetails = (data) => {
     <ViewActivityVue
       v-if="showModalViewData"
       :data="selectedData"
-      @close="showModalViewData = false"
+      @close="handleClose()"
     />
   </div>
 </template>

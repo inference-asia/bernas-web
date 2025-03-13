@@ -32,6 +32,8 @@ onMounted(async () => {
     backdrop: "static",
   });
 
+  if (!props.data) return;
+
   const response = await api.get(`/activities/${props.data.id}`, {
     params: {
       "populate[0]": "driver",
@@ -44,32 +46,31 @@ onMounted(async () => {
   });
 
   const newData = response.data.data;
-  if (newData) {
-    formData.value.driver_in = !newData.attributes.image_driver_in
-      ? null
-      : newData.attributes.image_driver_in.data.attributes.url;
-    formData.value.driver_out = !newData.attributes.image_driver_out
-      ? null
-      : newData.attributes.image_driver_out.data.attributes.url;
-    formData.value.plate_in = !newData.attributes.image_plate_in
-      ? null
-      : newData.attributes.image_plate_in.data.attributes.url;
-    formData.value.plate_out = !newData.attributes.image_plate_out
-      ? null
-      : newData.attributes.image_plate_out.data.attributes.url;
-    formData.value.content_in = !newData.attributes.image_content_in
-      ? null
-      : newData.attributes.image_content_in.data.attributes.url;
-    formData.value.content_out = !newData.attributes.image_content_out
-      ? null
-      : newData.attributes.image_scale_in.data.attributes.url;
-    formData.value.scale_in = !newData.attributes.image_scale_in
-      ? null
-      : newData.attributes.image_content_in.data.attributes.url;
-    formData.value.scale_out = !newData.attributes.image_scale_out
-      ? null
-      : newData.attributes.image_scale_out.data.attributes.url;
-  }
+  if (!newData) return;
+  formData.value.driver_in = !newData.attributes.image_driver_in
+    ? null
+    : newData.attributes.image_driver_in.data.attributes.url;
+  formData.value.driver_out = !newData.attributes.image_driver_out
+    ? null
+    : newData.attributes.image_driver_out.data.attributes.url;
+  formData.value.plate_in = !newData.attributes.image_plate_in
+    ? null
+    : newData.attributes.image_plate_in.data.attributes.url;
+  formData.value.plate_out = !newData.attributes.image_plate_out
+    ? null
+    : newData.attributes.image_plate_out.data.attributes.url;
+  formData.value.content_in = !newData.attributes.image_content_in
+    ? null
+    : newData.attributes.image_content_in.data.attributes.url;
+  formData.value.content_out = !newData.attributes.image_content_out
+    ? null
+    : newData.attributes.image_scale_in.data.attributes.url;
+  formData.value.scale_in = !newData.attributes.image_scale_in
+    ? null
+    : newData.attributes.image_content_in.data.attributes.url;
+  formData.value.scale_out = !newData.attributes.image_scale_out
+    ? null
+    : newData.attributes.image_scale_out.data.attributes.url;
 
   formData.value.driver = !props.data.attributes.driver.data
     ? null

@@ -6,7 +6,7 @@ import DefaultLayout from '../layouts/DefaultLayout.vue'
 import LoginView from '../views/LoginView.vue'
 import LoginLayout from '../layouts/LoginLayout.vue'
 import MapView from '@/views/MapView.vue'
-import ClientLayout from '@/layouts/ClientLayout.vue'
+import DriverView from '@/views/DriverView.vue'
 
 
 const { user, fetchMe } = useAuth()
@@ -15,16 +15,25 @@ const { user, fetchMe } = useAuth()
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    {
-      path: '/main/:id',
-      name: 'main',
-      children: [
+    // {
+    //   path: '/main/:id',
+    //   name: 'main',
+    //   children: [
       
-      ],
+    //   ],
+    //   meta: {
+    //     requiresAuth: true,
+    //     layout: ClientLayout
+    //   }
+    // },
+    {
+      path: '/driver',
+      name: 'driver',
+      component: DriverView,
       meta: {
         requiresAuth: true,
-        layout: ClientLayout
-      }
+        layout: DefaultLayout
+      },
     },
     {
       path: '/',

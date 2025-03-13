@@ -11,7 +11,7 @@ import { setupCalendar } from 'v-calendar'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faTv, faCode, faUserCircle, faLocationArrow, faArrowRightToBracket, faSpinner, faBars, faMapMarkerAlt, faCarAlt, faCircleInfo, faArrowRightLong, faMagnifyingGlass, faCircleXmark, faVideo, faHashtag, faGear, faCar, faTriangleExclamation, faXmark, faSun, faMoon, faArrowLeft, faCamera, faCrosshairs, faGripHorizontal, faChartColumn, faPlus, faClock, faMapLocationDot, faHouse, faCalendarDays, faFileUpload, faTrash, faCircleCheck, faScaleBalanced, faDownload, faList } from '@fortawesome/free-solid-svg-icons'
+import { faTv, faCode, faUserCircle, faLocationArrow, faArrowRightToBracket, faSpinner, faBars, faMapMarkerAlt, faCarAlt, faCircleInfo, faArrowRightLong, faMagnifyingGlass, faCircleXmark, faVideo, faHashtag, faGear, faCar, faTriangleExclamation, faXmark, faSun, faMoon, faArrowLeft, faCamera, faCrosshairs, faGripHorizontal, faChartColumn, faPlus, faClock, faMapLocationDot, faHouse, faCalendarDays, faFileUpload, faTrash, faCircleCheck, faScaleBalanced, faDownload, faList, faIdCard, faUser } from '@fortawesome/free-solid-svg-icons'
 
 import { createApp } from 'vue'
 import App from './App.vue'
@@ -60,6 +60,8 @@ library.add(faCircleCheck)
 library.add(faScaleBalanced)
 library.add(faDownload)
 library.add(faList)
+library.add(faIdCard)
+library.add(faUser)
 
 const app = createApp(App)
 app.component('v-select', VueSelect)
