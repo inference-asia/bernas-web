@@ -32,6 +32,7 @@ const fetchingData = async () => {
     params: {
       "populate[0]": "image",
       "populate[1]": "lorries",
+      sort: "createdAt:DESC",
       pagination: {
         page: paginations.value.page,
         pageSize: paginations.value.pageSize,
