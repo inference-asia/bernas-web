@@ -234,13 +234,15 @@ const handleUpdateDriver = (data) => {
             </td>
             <td>
               <div class="" v-if="driver.attributes.lorries.data.length > 0">
-                <div
-                  class="badge"
+                <span
+                  class="badge text-bg-light border"
                   v-for="lorry in driver.attributes.lorries.data"
                   :key="lorry.attributes.id"
                 >
-                  {{ lorry.attributes.plate_number }}
-                </div>
+                  <font-awesome-icon :icon="['fas', 'truck']" class="me-2" />{{
+                    lorry.attributes.plate_number
+                  }}
+                </span>
               </div>
               <div v-else>-</div>
             </td>

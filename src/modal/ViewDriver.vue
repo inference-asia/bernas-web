@@ -40,6 +40,14 @@ onMounted(async () => {
   formData.value.image = !newData.attributes.image.data
     ? null
     : newData.attributes.image.data.attributes.url;
+  formData.value.lorries = !newData.attributes.lorries
+    ? null
+    : newData.attributes.lorries.data.map((obj) => {
+        return {
+          id: obj.id,
+          label: obj.attributes.plate_number,
+        };
+      });
 
   modal.show();
 });
@@ -54,7 +62,7 @@ onBeforeUnmount(() => {
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-         <h5 class="modal-title">ID #{{!data.id ? '-' : data.id}}</h5>
+          <h5 class="modal-title">ID #{{ !data.id ? "-" : data.id }}</h5>
           <button
             type="button"
             class="btn-close"
@@ -111,6 +119,27 @@ onBeforeUnmount(() => {
                 </div>
               </div>
             </div>
+            <div class="row">
+              <div class="col">
+                <div class="mb-3">
+                  <label for="nric" class="form-label">LORRY</label>
+                  <div
+                    class="badge-container rounded d-flex align-items-center"
+                  >
+                    <div
+                      class="badge bg-light text-dark"
+                      v-for="lorry in formData.lorries"
+                      :key="lorry.id"
+                    >
+                      <font-awesome-icon
+                        :icon="['fas', 'truck']"
+                        class="me-2"
+                      />{{ lorry.label }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </form>
         </div>
 
@@ -131,5 +160,15 @@ onBeforeUnmount(() => {
 .container-image {
   width: 100%;
   height: 200px;
+}
+
+.badge-container {
+  display: block;
+  width: 100%;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  background-color: #eaecef;
 }
 </style>

@@ -14,6 +14,7 @@ const formData = ref({
   image: null,
   lorries: [],
 });
+const optionsData = ref([]);
 
 const imagePreview = ref(null);
 
@@ -22,12 +23,25 @@ onMounted(async () => {
     backdrop: "static",
   });
 
+  fetchingLorries();
+
   modal.show();
 });
 
 onBeforeUnmount(() => {
   modal.hide();
 });
+
+const fetchingLorries = async () => {
+  const response = await api.get(`/lorries`);
+
+  optionsData.value = response.data.data.map((obj) => {
+    return {
+      id: obj.id,
+      label: obj.attributes.plate_number,
+    };
+  });
+};
 
 const handleUpload = (event) => {
   const fileData = event.target.files[0];
@@ -58,6 +72,10 @@ const handleSave = async () => {
     }
 
     payload.image = image;
+  }
+
+  if (formData.value.lorries.length > 0) {
+    payload.lorries.map((obj) => obj.id);
   }
 
   if (!payload.name || !payload.ic_number) return;
@@ -161,6 +179,14 @@ const handleSave = async () => {
                     id="nric"
                     v-model="formData.ic_number"
                   />
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <div class="mb-3">
+                  <label for="nric" class="form-label">LORRY</label>
+                  <v-select multiple label="label" :options="optionsData" />
                 </div>
               </div>
             </div>

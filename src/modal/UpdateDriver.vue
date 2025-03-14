@@ -15,7 +15,7 @@ const formData = ref({
   image: null,
   lorries: [],
 });
-
+const optionsData = ref([]);
 const imagePreview = ref(null);
 
 onMounted(async () => {
@@ -24,7 +24,7 @@ onMounted(async () => {
   });
 
   if (!props.data) return;
-
+  await fetchingLorries();
   const response = await api.get(`/drivers/${props.data.id}`, {
     params: {
       "populate[0]": "image",
@@ -45,6 +45,14 @@ onMounted(async () => {
   formData.value.image = !newData.attributes.image.data
     ? null
     : newData.attributes.image.data;
+  formData.value.lorries = !newData.attributes.lorries
+    ? null
+    : newData.attributes.lorries.data.map((obj) => {
+        return {
+          id: obj.id,
+          label: obj.attributes.plate_number,
+        };
+      });
 
   imagePreview.value = !newData.attributes.image.data
     ? null
@@ -52,6 +60,17 @@ onMounted(async () => {
 
   modal.show();
 });
+
+const fetchingLorries = async () => {
+  const response = await api.get(`/lorries`);
+
+  optionsData.value = response.data.data.map((obj) => {
+    return {
+      id: obj.id,
+      label: obj.attributes.plate_number,
+    };
+  });
+};
 
 onBeforeUnmount(() => {
   modal.hide();
@@ -87,6 +106,10 @@ const handleSave = async () => {
     }
   } else {
     delete payload.image;
+  }
+
+  if (formData.value.lorries.length > 0) {
+    payload.lorries.map((obj) => obj.id);
   }
 
   if (!payload.name || !payload.ic_number) return;
@@ -194,6 +217,19 @@ const handleRemoveImage = () => {
                     class="form-control"
                     id="nric"
                     v-model="formData.ic_number"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <div class="mb-3">
+                  <label for="nric" class="form-label">LORRY</label>
+                  <v-select
+                    multiple
+                    label="label"
+                    :options="optionsData"
+                    v-model="formData.lorries"
                   />
                 </div>
               </div>
