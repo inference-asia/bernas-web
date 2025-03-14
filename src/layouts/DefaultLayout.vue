@@ -93,14 +93,19 @@ function performLogout() {
       </button>
 
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item me-3">
+          <li class="nav-item me-3 " :class="{
+            'text-primary fw-bold': route.name === 'dashboard'
+          }">
             <a class="nav-link" href="/"
               ><font-awesome-icon :icon="['fas', 'house']" class="me-2" />
               Dashboard
             </a>
           </li>
-          <li class="nav-item me-3">
+           <li class="nav-item me-3 " :class="{
+            'text-primary fw-bold': route.name === 'driver'
+          }">
             <a class="nav-link" :href="`driver`">
               <font-awesome-icon :icon="['fas', 'id-card']" class="me-2" />
               Driver
