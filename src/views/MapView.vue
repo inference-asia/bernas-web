@@ -521,11 +521,8 @@ const handleClose = async () => {
                 }}
               </td>
               <td>
-                <button class="btn">
-                  <font-awesome-icon
-                    :icon="['fas', 'list']"
-                    @click="handleViewDetails(data)"
-                  />
+                <button class="btn" @click="handleViewDetails(data)">
+                  <font-awesome-icon :icon="['fas', 'list']" />
                 </button>
                 <!-- <button class="btn">
                   <font-awesome-icon :icon="['fas', 'download']" />

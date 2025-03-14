@@ -6,6 +6,7 @@ import { onBeforeUnmount, onMounted, ref } from "vue";
 const api = useAPI();
 let modal;
 
+const props = defineProps(["data"]);
 const emit = defineEmits(["close"]);
 const isLoading = ref(false);
 const formData = ref({
@@ -21,6 +22,33 @@ onMounted(async () => {
   modal = new Modal(document.getElementById("driver-modal"), {
     backdrop: "static",
   });
+
+  if (!props.data) return;
+
+  const response = await api.get(`/drivers/${props.data.id}`, {
+    params: {
+      "populate[0]": "image",
+      "populate[1]": "lorries",
+    },
+  });
+
+  if (!response.data.data) return;
+
+  const newData = response.data.data;
+
+  formData.value.name = !newData.attributes.name
+    ? null
+    : newData.attributes.name;
+  formData.value.ic_number = !newData.attributes.ic_number
+    ? null
+    : newData.attributes.ic_number;
+  formData.value.image = !newData.attributes.image.data
+    ? null
+    : newData.attributes.image.data;
+
+  imagePreview.value = !newData.attributes.image.data
+    ? null
+    : newData.attributes.image.data.attributes.url;
 
   modal.show();
 });
@@ -52,17 +80,18 @@ const handleSave = async () => {
     image.append("files", formData.value.image);
 
     const response = await api.post(`/upload`, image);
-
     if (response.data.length > 0) {
       image = response.data[0].id;
-    }
 
-    payload.image = image;
+      payload.image = image;
+    }
+  } else {
+    delete payload.image;
   }
 
   if (!payload.name || !payload.ic_number) return;
   isLoading.value = true;
-  await api.post(`/drivers`, {
+  await api.put(`/drivers/${props.data.id}`, {
     data: payload,
   });
   isLoading.value = false;
@@ -75,6 +104,11 @@ const handleSave = async () => {
   };
   emit("close");
 };
+
+const handleRemoveImage = () => {
+  imagePreview.value = null;
+  formData.value.image = null;
+};
 </script>
 
 <template>
@@ -82,7 +116,7 @@ const handleSave = async () => {
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Add New Driver</h5>
+          <h5 class="modal-title">ID #{{ !data.id ? "-" : data.id }}</h5>
           <button
             type="button"
             class="btn-close"
@@ -116,7 +150,7 @@ const handleSave = async () => {
                         >
                           <button
                             class="position-absolute btn btn-sm btn-outline-danger mb-3"
-                            @click="imagePreview = null"
+                            @click="handleRemoveImage"
                           >
                             <font-awesome-icon
                               :icon="['fas', 'trash']"
@@ -181,7 +215,7 @@ const handleSave = async () => {
             >
               <span class="sr-only">Loading...</span>
             </div>
-            Save
+            Update
           </button>
         </div>
       </div>

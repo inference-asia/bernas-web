@@ -3,6 +3,7 @@ import { useAPI } from "@/composables/useAPI";
 import { onMounted, ref, computed } from "vue";
 import ViewDriver from "@/modal/ViewDriver.vue";
 import AddDriver from "@/modal/AddDriver.vue";
+import UpdateDriver from "@/modal/UpdateDriver.vue";
 
 const api = useAPI();
 
@@ -13,6 +14,7 @@ const newPagination = ref([]);
 const currentPageGroup = ref(0);
 const showModalDriver = ref(false);
 const showModalAddDriver = ref(false);
+const showModalUpdateDriver = ref(false);
 const paginations = ref({
   page: 1,
   pageSize: 12,
@@ -69,7 +71,7 @@ const handleViewDetails = (data) => {
   showModalDriver.value = true;
 };
 
-const handleClose = async () => {
+const handleCloseModalDetailsDriver = async () => {
   showModalDriver.value = false;
   selectedDriver.value = null;
   await fetchingData();
@@ -155,6 +157,17 @@ const handleCloseModalAddDriver = async () => {
   drivers.value = [];
   await fetchingData();
 };
+
+const handleCloseModalUpdateDriver = async () => {
+  showModalUpdateDriver.value = false;
+  drivers.value = [];
+  await fetchingData();
+};
+
+const handleUpdateDriver = (data) => {
+  selectedDriver.value = data;
+  showModalUpdateDriver.value = true;
+};
 </script>
 
 <template>
@@ -232,11 +245,12 @@ const handleCloseModalAddDriver = async () => {
               <div v-else>-</div>
             </td>
             <td>
-              <button class="btn">
-                <font-awesome-icon
-                  :icon="['fas', 'list']"
-                  @click="handleViewDetails(driver)"
-                />
+              <button class="btn" @click="handleViewDetails(driver)">
+                <font-awesome-icon :icon="['fas', 'list']" />
+              </button>
+
+              <button class="btn" @click="handleUpdateDriver(driver)">
+                <font-awesome-icon :icon="['fas', 'pen-to-square']" />
               </button>
             </td>
           </tr>
@@ -362,9 +376,14 @@ const handleCloseModalAddDriver = async () => {
     <ViewDriver
       v-if="showModalDriver"
       :data="selectedDriver"
-      @close="handleClose()"
+      @close="handleCloseModalDetailsDriver()"
     />
     <AddDriver v-if="showModalAddDriver" @close="handleCloseModalAddDriver()" />
+    <UpdateDriver
+      v-if="showModalUpdateDriver"
+      :data="selectedDriver"
+      @close="handleCloseModalUpdateDriver()"
+    />
   </div>
 </template>
 
