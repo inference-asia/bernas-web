@@ -2,6 +2,7 @@
 import { useAPI } from "@/composables/useAPI";
 import { Modal } from "bootstrap";
 import { onBeforeUnmount, onMounted, ref } from "vue";
+import ViewImage from "@/modal/ViewImage.vue";
 
 const api = useAPI();
 let modal;
@@ -26,6 +27,9 @@ const formData = ref({
   scale_in: null,
   scale_out: null,
 });
+
+const showModalViewImage = ref(false);
+const selectedImage = ref(null);
 
 onMounted(async () => {
   modal = new Modal(document.getElementById("activity-modal"), {
@@ -97,6 +101,16 @@ onMounted(async () => {
 onBeforeUnmount(() => {
   modal.hide();
 });
+
+const handleOpenModalViewImage = (img) => {
+  showModalViewImage.value = true;
+  selectedImage.value = img;
+};
+
+const handleCloseModalViewImage = () => {
+  showModalViewImage.value = false;
+  selectedImage.value = null;
+};
 </script>
 
 <template>
@@ -199,7 +213,10 @@ onBeforeUnmount(() => {
               <div class="col">
                 <div class="mb-3">
                   <label for="weight_in" class="form-label">DRIVER IN</label>
-                  <div class="rounded bg-dark overflow-hidden">
+                  <div
+                    class="rounded bg-dark overflow-hidden"
+                    @click="handleOpenModalViewImage(formData.driver_in)"
+                  >
                     <img
                       class="box-image img-fluid mx-auto d-block"
                       :src="formData.driver_in"
@@ -210,7 +227,10 @@ onBeforeUnmount(() => {
               <div class="col">
                 <div class="mb-3">
                   <label for="weight_in" class="form-label">DRIVER OUT</label>
-                  <div class="rounded bg-dark overflow-hidden">
+                  <div
+                    class="rounded bg-dark overflow-hidden"
+                    @click="handleOpenModalViewImage(formData.driver_out)"
+                  >
                     <img
                       class="box-image img-fluid mx-auto d-block"
                       :src="formData.driver_out"
@@ -221,7 +241,10 @@ onBeforeUnmount(() => {
               <div class="col">
                 <div class="mb-3">
                   <label for="weight_in" class="form-label">PLATE IN</label>
-                  <div class="rounded bg-dark overflow-hidden">
+                  <div
+                    class="rounded bg-dark overflow-hidden"
+                    @click="handleOpenModalViewImage(formData.plate_in)"
+                  >
                     <img
                       class="box-image img-fluid mx-auto d-block"
                       :src="formData.plate_in"
@@ -232,7 +255,10 @@ onBeforeUnmount(() => {
               <div class="col">
                 <div class="mb-3">
                   <label for="weight_in" class="form-label">PLATE OUT</label>
-                  <div class="rounded bg-dark overflow-hidden">
+                  <div
+                    class="rounded bg-dark overflow-hidden"
+                    @click="handleOpenModalViewImage(formData.plate_out)"
+                  >
                     <img
                       class="box-image img-fluid mx-auto d-block"
                       :src="formData.plate_out"
@@ -245,7 +271,10 @@ onBeforeUnmount(() => {
               <div class="col">
                 <div class="mb-3">
                   <label for="weight_in" class="form-label">CONTENT IN</label>
-                  <div class="rounded bg-dark overflow-hidden">
+                  <div
+                    class="rounded bg-dark overflow-hidden"
+                    @click="handleOpenModalViewImage(formData.content_in)"
+                  >
                     <img
                       class="box-image img-fluid mx-auto d-block"
                       :src="formData.content_in"
@@ -256,7 +285,10 @@ onBeforeUnmount(() => {
               <div class="col">
                 <div class="mb-3">
                   <label for="weight_in" class="form-label">CONTENT OUT</label>
-                  <div class="rounded bg-dark overflow-hidden">
+                  <div
+                    class="rounded bg-dark overflow-hidden"
+                    @click="handleOpenModalViewImage(formData.content_out)"
+                  >
                     <img
                       class="box-image img-fluid mx-auto d-block"
                       :src="formData.content_out"
@@ -267,7 +299,10 @@ onBeforeUnmount(() => {
               <div class="col">
                 <div class="mb-3">
                   <label for="weight_in" class="form-label">SCALE IN</label>
-                  <div class="rounded bg-dark overflow-hidden">
+                  <div
+                    class="rounded bg-dark overflow-hidden"
+                    @click="handleOpenModalViewImage(formData.scale_in)"
+                  >
                     <img
                       class="box-image img-fluid mx-auto d-block"
                       :src="formData.scale_in"
@@ -278,7 +313,10 @@ onBeforeUnmount(() => {
               <div class="col">
                 <div class="mb-3">
                   <label for="weight_in" class="form-label">SCALE OUT</label>
-                  <div class="rounded bg-dark overflow-hidden">
+                  <div
+                    class="rounded bg-dark overflow-hidden"
+                    @click="handleOpenModalViewImage(formData.scale_out)"
+                  >
                     <img
                       class="box-image img-fluid mx-auto d-block"
                       :src="formData.scale_out"
@@ -295,6 +333,11 @@ onBeforeUnmount(() => {
         </div>
       </div>
     </div>
+    <ViewImage
+      :image="selectedImage"
+      @close="showModalViewImage = false"
+      v-if="showModalViewImage"
+    />
   </div>
 </template>
 
