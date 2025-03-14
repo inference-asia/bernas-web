@@ -2,14 +2,17 @@
 import { useAPI } from "@/composables/useAPI";
 import { onMounted, ref, computed } from "vue";
 import ViewDriver from "@/modal/ViewDriver.vue";
+import AddDriver from "@/modal/AddDriver.vue";
 
 const api = useAPI();
 
+const isLoading = ref(false);
 const drivers = ref([]);
 const selectedDriver = ref(null);
 const newPagination = ref([]);
 const currentPageGroup = ref(0);
 const showModalDriver = ref(false);
+const showModalAddDriver = ref(false);
 const paginations = ref({
   page: 1,
   pageSize: 12,
@@ -22,6 +25,7 @@ onMounted(async () => {
 });
 
 const fetchingData = async () => {
+  isLoading.value = true;
   const response = await api.get("drivers", {
     params: {
       "populate[0]": "image",
@@ -32,7 +36,7 @@ const fetchingData = async () => {
       },
     },
   });
-
+  isLoading.value = false;
   drivers.value = response.data.data;
 
   if (response.data.data.length > 0) {
@@ -65,9 +69,10 @@ const handleViewDetails = (data) => {
   showModalDriver.value = true;
 };
 
-const handleClose = () => {
+const handleClose = async () => {
   showModalDriver.value = false;
   selectedDriver.value = null;
+  await fetchingData();
 };
 
 const onNext = async () => {
@@ -144,6 +149,12 @@ const handleGotoNextGroupedPage = async () => {
 const computedArrayPage = computed(() => {
   return newPagination.value[currentPageGroup.value];
 });
+
+const handleCloseModalAddDriver = async () => {
+  showModalAddDriver.value = false;
+  drivers.value = [];
+  await fetchingData();
+};
 </script>
 
 <template>
@@ -152,10 +163,13 @@ const computedArrayPage = computed(() => {
       <div class="box-action mb-2 d-flex justify-content-between">
         <h2>Driver</h2>
         <div class="d-flex align-items-center">
-          <!-- <button class="btn btn-sm btn-primary">
+          <button
+            class="btn btn-sm btn-primary"
+            @click="showModalAddDriver = true"
+          >
             Add New Driver
             <font-awesome-icon :icon="['fas', 'plus']" class="ms-2" />
-          </button> -->
+          </button>
         </div>
       </div>
     </div>
@@ -228,7 +242,11 @@ const computedArrayPage = computed(() => {
           </tr>
         </tbody>
       </table>
-
+      <div class="m-auto my-5" style="width: 30px" v-if="isLoading">
+        <div class="spinner-border text-primary" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
       <div class="mt-4 d-flex w-100 justify-content-end" v-if="drivers.length">
         <nav aria-label="..." v-if="newPagination.length">
           <ul class="pagination mb-0 pagination-sm">
@@ -346,6 +364,7 @@ const computedArrayPage = computed(() => {
       :data="selectedDriver"
       @close="handleClose()"
     />
+    <AddDriver v-if="showModalAddDriver" @close="handleCloseModalAddDriver()" />
   </div>
 </template>
 

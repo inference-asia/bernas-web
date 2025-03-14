@@ -373,9 +373,12 @@ const handleViewDetails = (data) => {
   selectedData.value = data;
 };
 
-const handleClose = () => {
+const handleClose = async () => {
   showModalViewData.value = false;
   selectedData.value = null;
+  dataSource.value = [];
+  await fetchingData();
+  await countWeight();
 };
 </script>
 
