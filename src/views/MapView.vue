@@ -202,9 +202,9 @@ const downloadCSVFromJSON = async () => {
         ? "-"
         : data[i].attributes.driver.data.attributes.name.toUpperCase(),
       LORRY: "-",
-      ["PLATE NUMBER"]: !data[i].attributes.plateNumber
+      ["PLATE NUMBER"]: !data[i].attributes.plate_number
         ? "-"
-        : data[i].attributes.plateNumber,
+        : data[i].attributes.plate_number,
       ["PLATE NUMBER"]: "-",
       ["WEIGHT IN"]: !data[i].attributes.weight_in
         ? "-"
@@ -480,9 +480,9 @@ const handleClose = async () => {
               <td>-</td>
               <td>
                 {{
-                  !data.attributes.plateNumber
+                  !data.attributes.plate_number
                     ? "-"
-                    : data.attributes.plateNumber
+                    : data.attributes.plate_number
                 }}
               </td>
               <td>
