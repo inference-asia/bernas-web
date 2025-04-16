@@ -46,6 +46,10 @@ onMounted(async () => {
       "populate[3]": "image_driver_out",
       "populate[4]": "image_plate_in",
       "populate[5]": "image_plate_out",
+      "populate[6]": "image_content_in",
+      "populate[7]": "image_content_out",
+      "populate[8]": "image_scale_in",
+      "populate[9]": "image_scale_out",
     },
   });
 
