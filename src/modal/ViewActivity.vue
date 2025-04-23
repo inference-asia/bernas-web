@@ -72,14 +72,13 @@ onMounted(async () => {
     : newData.attributes.image_content_in.data.attributes.url;
   formData.value.content_out = !newData.attributes.image_content_out
     ? null
-    : newData.attributes.image_scale_in.data.attributes.url;
+    : newData.attributes.image_content_out.data.attributes.url;
   formData.value.scale_in = !newData.attributes.image_scale_in
     ? null
-    : newData.attributes.image_content_in.data.attributes.url;
+    : newData.attributes.image_scale_in.data.attributes.url;
   formData.value.scale_out = !newData.attributes.image_scale_out
     ? null
     : newData.attributes.image_scale_out.data.attributes.url;
-
   formData.value.driver = !props.data.attributes.driver.data
     ? null
     : props.data.attributes.driver.data.attributes.name;
