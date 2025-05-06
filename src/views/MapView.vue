@@ -53,16 +53,16 @@ const fetchingData = async () => {
     params: {
       "populate[0]": "driver",
       "populate[1]": "lorry",
-      sort: "createdAt:DESC",
+      sort: "timestamp_in:DESC",
       filters: {
         $and: [
           {
-            createdAt: {
+            timestamp_in: {
               $gte: startDate,
             },
           },
           {
-            createdAt: {
+            timestamp_in: {
               $lte: endDate,
             },
           },
@@ -258,12 +258,12 @@ const fetchingDataAll = async () => {
       filters: {
         $and: [
           {
-            createdAt: {
+            timestamp_in: {
               $gte: startDate,
             },
           },
           {
-            createdAt: {
+            timestamp_in: {
               $lte: endDate,
             },
           },
@@ -287,12 +287,12 @@ const countWeight = async () => {
       filters: {
         $and: [
           {
-            createdAt: {
+            timestamp_in: {
               $gte: startDate,
             },
           },
           {
-            createdAt: {
+            timestamp_in: {
               $lte: endDate,
             },
           },
@@ -339,12 +339,12 @@ const countWeightMonth = async () => {
       filters: {
         $and: [
           {
-            createdAt: {
+            timestamp_in: {
               $gte: firstDay,
             },
           },
           {
-            createdAt: {
+            timestamp_in: {
               $lte: lastDay,
             },
           },
