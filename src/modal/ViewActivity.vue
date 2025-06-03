@@ -15,7 +15,7 @@ const formData = ref({
   weight_in: null,
   weight_out: null,
   weight_diff: null,
-  plateNumber: null,
+  plate_number: null,
   timestamp_in: null,
   timestamp_out: null,
   driver_in: null,
@@ -94,9 +94,9 @@ onMounted(async () => {
   formData.value.weight_diff = !props.data.attributes.weight_diff
     ? null
     : props.data.attributes.weight_diff;
-  formData.value.plateNumber = !props.data.attributes.plateNumber
+  formData.value.plate_number = !props.data.attributes.plate_number
     ? null
-    : props.data.attributes.plateNumber;
+    : props.data.attributes.plate_number;
 
   modal.show();
 });
@@ -206,7 +206,7 @@ const handleCloseModalViewImage = () => {
                     type="text"
                     class="form-control"
                     id="plateNumber"
-                    v-model="formData.plateNumber"
+                    v-model="formData.plate_number"
                     disabled
                   />
                 </div>
