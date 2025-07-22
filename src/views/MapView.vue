@@ -212,7 +212,7 @@ const downloadCSVFromJSON = async () => {
       ["WEIGHT OUT"]: !data[i].attributes.weight_out
         ? "-"
         : data[i].attributes.weight_in,
-      ["WEIGHT DIFF"]: !data[i].attributes.weight_diff
+      ["GROSS WEIGHT"]: !data[i].attributes.weight_diff
         ? "-"
         : data[i].attributes.weight_diff,
       ["TIME IN"]: !data[i].attributes.timestamp_in
@@ -457,7 +457,7 @@ const handleClose = async () => {
               <th>PLATE NUMBER</th>
               <th>WEIGHT IN</th>
               <th>WEIGHT OUT</th>
-              <th>WEIGHT DIFFERENT</th>
+              <th>GROSS WEIGHT</th>
               <th>TIME IN</th>
               <th>TIME OUT</th>
               <th>ACTION(S)</th>
