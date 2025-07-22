@@ -186,7 +186,7 @@ const handleCloseModalViewImage = () => {
               <div class="col">
                 <div class="mb-3">
                   <label for="weight_diff" class="form-label"
-                    >WEIGHT DIFFERENT</label
+                    >GROSS WEIGHT</label
                   >
                   <input
                     type="text"
