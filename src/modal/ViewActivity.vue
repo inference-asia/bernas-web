@@ -55,28 +55,28 @@ onMounted(async () => {
 
   const newData = response.data.data;
   if (!newData) return;
-  formData.value.driver_in = !newData.attributes.image_driver_in
+  formData.value.driver_in = !newData.attributes.image_driver_in.data
     ? null
     : newData.attributes.image_driver_in.data.attributes.url;
-  formData.value.driver_out = !newData.attributes.image_driver_out
+  formData.value.driver_out = !newData.attributes.image_driver_out.data
     ? null
     : newData.attributes.image_driver_out.data.attributes.url;
-  formData.value.plate_in = !newData.attributes.image_plate_in
+  formData.value.plate_in = !newData.attributes.image_plate_in.data
     ? null
     : newData.attributes.image_plate_in.data.attributes.url;
-  formData.value.plate_out = !newData.attributes.image_plate_out
+  formData.value.plate_out = !newData.attributes.image_plate_out.data
     ? null
     : newData.attributes.image_plate_out.data.attributes.url;
-  formData.value.content_in = !newData.attributes.image_content_in
+  formData.value.content_in = !newData.attributes.image_content_in.data
     ? null
     : newData.attributes.image_content_in.data.attributes.url;
-  formData.value.content_out = !newData.attributes.image_content_out
+  formData.value.content_out = !newData.attributes.image_content_out.data
     ? null
     : newData.attributes.image_content_out.data.attributes.url;
-  formData.value.scale_in = !newData.attributes.image_scale_in
+  formData.value.scale_in = !newData.attributes.image_scale_in.data
     ? null
     : newData.attributes.image_scale_in.data.attributes.url;
-  formData.value.scale_out = !newData.attributes.image_scale_out
+  formData.value.scale_out = !newData.attributes.image_scale_out.data
     ? null
     : newData.attributes.image_scale_out.data.attributes.url;
   formData.value.driver = !props.data.attributes.driver.data
@@ -84,16 +84,16 @@ onMounted(async () => {
     : props.data.attributes.driver.data.attributes.name;
   formData.value.lorry = !props.data.attributes.lorry.data
     ? null
-    : props.data.attributes.lorry.data.attributes.name;
+    : props.data.attributes.lorry.data.attributes.plate_number;
   formData.value.weight_in = !props.data.attributes.weight_in
     ? null
-    : props.data.attributes.weight_in;
+    : props.data.attributes.weight_in + " kg";
   formData.value.weight_out = !props.data.attributes.weight_out
     ? null
-    : props.data.attributes.weight_out;
+    : props.data.attributes.weight_out + " kg";
   formData.value.weight_diff = !props.data.attributes.weight_diff
     ? null
-    : props.data.attributes.weight_diff;
+    : props.data.attributes.weight_diff + " kg";
   formData.value.plate_number = !props.data.attributes.plate_number
     ? null
     : props.data.attributes.plate_number;
@@ -122,12 +122,7 @@ const handleCloseModalViewImage = () => {
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">ID #{{ data.id }}</h5>
-          <button
-            type="button"
-            class="btn-close"
-            aria-label="Close"
-            @click="emit('close')"
-          ></button>
+          <button type="button" class="btn-close" aria-label="Close" @click="emit('close')"></button>
         </div>
 
         <div class="modal-body">
@@ -136,25 +131,13 @@ const handleCloseModalViewImage = () => {
               <div class="col">
                 <div class="mb-3">
                   <label for="driver" class="form-label">DRIVER</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="driver"
-                    v-model="formData.driver"
-                    disabled
-                  />
+                  <input type="text" class="form-control" id="driver" v-model="formData.driver" disabled />
                 </div>
               </div>
               <div class="col">
                 <div class="mb-3">
                   <label for="lorry" class="form-label">LORRY</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="lorry"
-                    v-model="formData.lorry"
-                    disabled
-                  />
+                  <input type="text" class="form-control" id="lorry" v-model="formData.lorry" disabled />
                 </div>
               </div>
             </div>
@@ -162,53 +145,25 @@ const handleCloseModalViewImage = () => {
               <div class="col">
                 <div class="mb-3">
                   <label for="weight_in" class="form-label">WEIGHT IN</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="weight_in"
-                    v-model="formData.weight_in"
-                    disabled
-                  />
+                  <input type="text" class="form-control" id="weight_in" v-model="formData.weight_in" disabled />
                 </div>
               </div>
               <div class="col">
                 <div class="mb-3">
                   <label for="weight_out" class="form-label">WEIGHT OUT</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="weight_out"
-                    v-model="formData.weight_out"
-                    disabled
-                  />
+                  <input type="text" class="form-control" id="weight_out" v-model="formData.weight_out" disabled />
                 </div>
               </div>
               <div class="col">
                 <div class="mb-3">
-                  <label for="weight_diff" class="form-label"
-                    >GROSS WEIGHT</label
-                  >
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="weight_diff"
-                    v-model="formData.weight_diff"
-                    disabled
-                  />
+                  <label for="weight_diff" class="form-label">GROSS WEIGHT</label>
+                  <input type="text" class="form-control" id="weight_diff" v-model="formData.weight_diff" disabled />
                 </div>
               </div>
               <div class="col">
                 <div class="mb-3">
-                  <label for="plateNumber" class="form-label"
-                    >PLATE NUMBER</label
-                  >
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="plateNumber"
-                    v-model="formData.plate_number"
-                    disabled
-                  />
+                  <label for="plateNumber" class="form-label">PLATE NUMBER</label>
+                  <input type="text" class="form-control" id="plateNumber" v-model="formData.plate_number" disabled />
                 </div>
               </div>
             </div>
@@ -216,56 +171,32 @@ const handleCloseModalViewImage = () => {
               <div class="col">
                 <div class="mb-3">
                   <label for="weight_in" class="form-label">DRIVER IN</label>
-                  <div
-                    class="rounded bg-dark overflow-hidden"
-                    @click="handleOpenModalViewImage(formData.driver_in)"
-                  >
-                    <img
-                      class="box-image img-fluid mx-auto d-block"
-                      :src="formData.driver_in"
-                    />
+                  <div class="rounded bg-dark overflow-hidden" @click="handleOpenModalViewImage(formData.driver_in)">
+                    <img class="box-image img-fluid mx-auto d-block" :src="formData.driver_in" />
                   </div>
                 </div>
               </div>
               <div class="col">
                 <div class="mb-3">
                   <label for="weight_in" class="form-label">DRIVER OUT</label>
-                  <div
-                    class="rounded bg-dark overflow-hidden"
-                    @click="handleOpenModalViewImage(formData.driver_out)"
-                  >
-                    <img
-                      class="box-image img-fluid mx-auto d-block"
-                      :src="formData.driver_out"
-                    />
+                  <div class="rounded bg-dark overflow-hidden" @click="handleOpenModalViewImage(formData.driver_out)">
+                    <img class="box-image img-fluid mx-auto d-block" :src="formData.driver_out" />
                   </div>
                 </div>
               </div>
               <div class="col">
                 <div class="mb-3">
                   <label for="weight_in" class="form-label">PLATE IN</label>
-                  <div
-                    class="rounded bg-dark overflow-hidden"
-                    @click="handleOpenModalViewImage(formData.plate_in)"
-                  >
-                    <img
-                      class="box-image img-fluid mx-auto d-block"
-                      :src="formData.plate_in"
-                    />
+                  <div class="rounded bg-dark overflow-hidden" @click="handleOpenModalViewImage(formData.plate_in)">
+                    <img class="box-image img-fluid mx-auto d-block" :src="formData.plate_in" />
                   </div>
                 </div>
               </div>
               <div class="col">
                 <div class="mb-3">
                   <label for="weight_in" class="form-label">PLATE OUT</label>
-                  <div
-                    class="rounded bg-dark overflow-hidden"
-                    @click="handleOpenModalViewImage(formData.plate_out)"
-                  >
-                    <img
-                      class="box-image img-fluid mx-auto d-block"
-                      :src="formData.plate_out"
-                    />
+                  <div class="rounded bg-dark overflow-hidden" @click="handleOpenModalViewImage(formData.plate_out)">
+                    <img class="box-image img-fluid mx-auto d-block" :src="formData.plate_out" />
                   </div>
                 </div>
               </div>
@@ -274,56 +205,32 @@ const handleCloseModalViewImage = () => {
               <div class="col">
                 <div class="mb-3">
                   <label for="weight_in" class="form-label">CONTENT IN</label>
-                  <div
-                    class="rounded bg-dark overflow-hidden"
-                    @click="handleOpenModalViewImage(formData.content_in)"
-                  >
-                    <img
-                      class="box-image img-fluid mx-auto d-block"
-                      :src="formData.content_in"
-                    />
+                  <div class="rounded bg-dark overflow-hidden" @click="handleOpenModalViewImage(formData.content_in)">
+                    <img class="box-image img-fluid mx-auto d-block" :src="formData.content_in" />
                   </div>
                 </div>
               </div>
               <div class="col">
                 <div class="mb-3">
                   <label for="weight_in" class="form-label">CONTENT OUT</label>
-                  <div
-                    class="rounded bg-dark overflow-hidden"
-                    @click="handleOpenModalViewImage(formData.content_out)"
-                  >
-                    <img
-                      class="box-image img-fluid mx-auto d-block"
-                      :src="formData.content_out"
-                    />
+                  <div class="rounded bg-dark overflow-hidden" @click="handleOpenModalViewImage(formData.content_out)">
+                    <img class="box-image img-fluid mx-auto d-block" :src="formData.content_out" />
                   </div>
                 </div>
               </div>
               <div class="col">
                 <div class="mb-3">
                   <label for="weight_in" class="form-label">SCALE IN</label>
-                  <div
-                    class="rounded bg-dark overflow-hidden"
-                    @click="handleOpenModalViewImage(formData.scale_in)"
-                  >
-                    <img
-                      class="box-image img-fluid mx-auto d-block"
-                      :src="formData.scale_in"
-                    />
+                  <div class="rounded bg-dark overflow-hidden" @click="handleOpenModalViewImage(formData.scale_in)">
+                    <img class="box-image img-fluid mx-auto d-block" :src="formData.scale_in" />
                   </div>
                 </div>
               </div>
               <div class="col">
                 <div class="mb-3">
                   <label for="weight_in" class="form-label">SCALE OUT</label>
-                  <div
-                    class="rounded bg-dark overflow-hidden"
-                    @click="handleOpenModalViewImage(formData.scale_out)"
-                  >
-                    <img
-                      class="box-image img-fluid mx-auto d-block"
-                      :src="formData.scale_out"
-                    />
+                  <div class="rounded bg-dark overflow-hidden" @click="handleOpenModalViewImage(formData.scale_out)">
+                    <img class="box-image img-fluid mx-auto d-block" :src="formData.scale_out" />
                   </div>
                 </div>
               </div>
@@ -336,11 +243,7 @@ const handleCloseModalViewImage = () => {
         </div>
       </div>
     </div>
-    <ViewImage
-      :image="selectedImage"
-      @close="showModalViewImage = false"
-      v-if="showModalViewImage"
-    />
+    <ViewImage :image="selectedImage" @close="showModalViewImage = false" v-if="showModalViewImage" />
   </div>
 </template>
 

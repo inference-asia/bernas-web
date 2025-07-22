@@ -45,6 +45,18 @@ watch(
   }
 );
 
+const tempUseManualWeight = (data) => {
+  if (!data) return [];
+
+  return data.map(res => {
+    res.attributes.weight_in = res.attributes.manual_content ? res.attributes.manual_content['Berat Masuk'] : res.attributes.weight_in;
+    res.attributes.weight_out = res.attributes.manual_content ? res.attributes.manual_content['Berat Keluar'] : res.attributes.weight_out;
+    res.attributes.weight_diff = res.attributes.manual_content ? (res.attributes.weight_in || 0) - (res.attributes.weight_out || 0) : res.attributes.weight_diff;
+
+    return res;
+  });
+}
+
 const fetchingData = async () => {
   isLoading.value = true;
   const startDate = moment(dateFilter.value[0]).startOf("days").toISOString();
@@ -76,7 +88,10 @@ const fetchingData = async () => {
   });
   isLoading.value = false;
   if (response.data.data.length > 0) {
-    dataSource.value = response.data.data;
+    // // Temporarily display weight from manual_content
+    // dataSource.value = response.data.data;
+    dataSource.value = tempUseManualWeight(response.data.data);
+
     paginations.value = response.data.meta.pagination;
 
     const arraypage = response.data.meta.pagination.pageCount;
@@ -191,7 +206,9 @@ const dateFormatPicker = (date) => {
 };
 
 const downloadCSVFromJSON = async () => {
-  const data = await fetchingDataAll();
+  let data = await fetchingDataAll();
+  // // Temporarily use manul weight
+  data = tempUseManualWeight(data);
 
   let arrayItem = [];
   if (!data.length) return;
@@ -208,10 +225,10 @@ const downloadCSVFromJSON = async () => {
       ["PLATE NUMBER"]: "-",
       ["WEIGHT IN"]: !data[i].attributes.weight_in
         ? "-"
-        : data[i].attributes.weight_out,
+        : data[i].attributes.weight_in,
       ["WEIGHT OUT"]: !data[i].attributes.weight_out
         ? "-"
-        : data[i].attributes.weight_in,
+        : data[i].attributes.weight_out,
       ["GROSS WEIGHT"]: !data[i].attributes.weight_diff
         ? "-"
         : data[i].attributes.weight_diff,
@@ -240,8 +257,8 @@ const downloadCSVFromJSON = async () => {
     `ACTIVITY LOG ${moment(dateFilter.value[0])
       .startOf("days")
       .format("DD/MM/YYYY")} - ${moment(dateFilter.value[1])
-      .endOf("days")
-      .format("DD/MM/YYYY")}.csv`
+        .endOf("days")
+        .format("DD/MM/YYYY")}.csv`
   );
   document.body.appendChild(link);
   link.click();
@@ -255,6 +272,7 @@ const fetchingDataAll = async () => {
     params: {
       "populate[0]": "driver",
       "populate[1]": "lorry",
+      sort: "timestamp_in:DESC",
       filters: {
         $and: [
           {
@@ -305,7 +323,9 @@ const countWeight = async () => {
     },
   });
 
-  const newData = response.data.data;
+  // const newData = response.data.data;
+  // // Temporarily use manual weight
+  const newData = tempUseManualWeight(response.data.data);
 
   // Calculate Weight Total
   const filteredData = newData.filter((obj) => obj.attributes.weight_in);
@@ -357,7 +377,9 @@ const countWeightMonth = async () => {
     },
   });
 
-  const newData = response.data.data;
+  // const newData = response.data.data;
+  // // Temporarily use manual weight
+  const newData = tempUseManualWeight(response.data.data);
 
   // Calculate Weight Total
   const filteredData = newData.filter((obj) => obj.attributes.weight_in);
@@ -388,26 +410,12 @@ const handleClose = async () => {
       <div class="box-action mb-2 d-flex justify-content-between">
         <h2>&nbsp;</h2>
         <div class="d-flex align-items-center">
-          <VueDatePicker
-            range
-            v-model="dateFilter"
-            :format="dateFormatPicker"
-            :dark="true"
-            :clearable="false"
-            :enable-time-picker="false"
-          />
-          <button
-            class="btn btn-primary btn-sm ms-2"
-            :disabled="dataSource.length === 0"
-            style="width: 250px"
-            @click="downloadCSVFromJSON"
-          >
+          <VueDatePicker range v-model="dateFilter" :format="dateFormatPicker" :dark="true" :clearable="false"
+            :enable-time-picker="false" />
+          <button class="btn btn-primary btn-sm ms-2" :disabled="dataSource.length === 0" style="width: 250px"
+            @click="downloadCSVFromJSON">
             Export Data
-            <font-awesome-icon
-              :icon="['fas', 'download']"
-              size="sm"
-              class="ms-2"
-            />
+            <font-awesome-icon :icon="['fas', 'download']" size="sm" class="ms-2" />
           </button>
         </div>
       </div>
@@ -418,10 +426,7 @@ const handleClose = async () => {
               <div class="card-body">
                 <p class="mb-1 text-primary small">Total Weight</p>
                 <div class="d-flex align-items-center">
-                  <font-awesome-icon
-                    :icon="['fas', 'scale-balanced']"
-                    class="me-2"
-                  />
+                  <font-awesome-icon :icon="['fas', 'scale-balanced']" class="me-2" />
                   <h2 class="fw-bold me-2">{{ countTotalWeight }}</h2>
                   <p class="mb-0">kg</p>
                 </div>
@@ -435,10 +440,7 @@ const handleClose = async () => {
                   Total Weight in {{ moment().format("MMMM") }}
                 </p>
                 <div class="d-flex align-items-center">
-                  <font-awesome-icon
-                    :icon="['fas', 'scale-balanced']"
-                    class="me-2"
-                  />
+                  <font-awesome-icon :icon="['fas', 'scale-balanced']" class="me-2" />
                   <h2 class="fw-bold me-2">{{ countTotalWeightMonthly }}</h2>
                   <p class="mb-0">kg</p>
                 </div>
@@ -464,11 +466,7 @@ const handleClose = async () => {
             </tr>
           </thead>
           <tbody>
-            <tr
-              v-for="(data, index) in dataSource"
-              :key="index"
-              class="align-middle"
-            >
+            <tr v-for="(data, index) in dataSource" :key="index" class="align-middle" :data-id="data.id">
               <td>{{ index + 1 }}.</td>
               <td class="text-capitalize">
                 {{
@@ -477,7 +475,13 @@ const handleClose = async () => {
                     : data.attributes.driver.data.attributes.name
                 }}
               </td>
-              <td>-</td>
+              <td>
+                {{
+                  !data.attributes.lorry || !data.attributes.lorry.data
+                    ? "-"
+                    : data.attributes.lorry.data.attributes.plate_number
+                }}
+              </td>
               <td>
                 {{
                   !data.attributes.plate_number
@@ -489,21 +493,21 @@ const handleClose = async () => {
                 {{
                   !data.attributes.weight_in
                     ? "-"
-                    : data.attributes.weight_in + "kg"
+                    : data.attributes.weight_in + " kg"
                 }}
               </td>
               <td>
                 {{
                   !data.attributes.weight_out
                     ? "-"
-                    : data.attributes.weight_out + "kg"
+                    : data.attributes.weight_out + " kg"
                 }}
               </td>
               <td>
                 {{
                   !data.attributes.weight_diff
                     ? "-"
-                    : data.attributes.weight_diff + "kg"
+                    : data.attributes.weight_diff + " kg"
                 }}
               </td>
               <td>
@@ -539,130 +543,58 @@ const handleClose = async () => {
             <span class="sr-only">Loading...</span>
           </div>
         </div>
-        <div
-          class="mt-4 d-flex w-100 justify-content-end"
-          v-if="dataSource.length"
-        >
+        <div class="mt-4 d-flex w-100 justify-content-end" v-if="dataSource.length">
           <nav aria-label="..." v-if="newPagination.length">
             <ul class="pagination mb-0 pagination-sm">
-              <li
-                class="page-item"
-                :class="{
-                  disabled: paginations.page === 1,
-                  'page-item': true,
-                }"
-              >
-                <a
-                  class="page-link"
-                  style="cursor: pointer"
-                  href="#"
-                  @click="onPrevious"
-                  >Previous</a
-                >
+              <li class="page-item" :class="{
+                disabled: paginations.page === 1,
+                'page-item': true,
+              }">
+                <a class="page-link" style="cursor: pointer" href="#" @click="onPrevious">Previous</a>
               </li>
-              <li
-                class="page-item"
-                v-if="
-                  paginations.page > 10 &&
-                  paginations.page <= paginations.pageCount
-                "
-                :class="{
-                  'page-item': true,
-                }"
-              >
-                <a
-                  class="page-link"
-                  style="cursor: pointer"
-                  href="#"
-                  @click="handleClickPage(1)"
-                  >1</a
-                >
+              <li class="page-item" v-if="
+                paginations.page > 10 &&
+                paginations.page <= paginations.pageCount
+              " :class="{
+                'page-item': true,
+              }">
+                <a class="page-link" style="cursor: pointer" href="#" @click="handleClickPage(1)">1</a>
               </li>
-              <li
-                class="page-item"
-                :class="{
-                  disabled: currentPageGroup === 0,
-                }"
-              >
-                <a
-                  class="page-link"
-                  href="#"
-                  style="cursor: pointer"
-                  @click="handleGotoPreviousGroupedPage"
-                  >...</a
-                >
+              <li class="page-item" :class="{
+                disabled: currentPageGroup === 0,
+              }">
+                <a class="page-link" href="#" style="cursor: pointer" @click="handleGotoPreviousGroupedPage">...</a>
               </li>
-              <li
-                class="page-item"
-                v-for="page in computedArrayPage"
-                :key="page"
-              >
-                <a
-                  class="page-link"
-                  style="cursor: pointer"
-                  :class="{
-                    active: paginations.page === page,
-                  }"
-                  @click="handleClickPage(page)"
-                  >{{ page }}</a
-                >
+              <li class="page-item" v-for="page in computedArrayPage" :key="page">
+                <a class="page-link" style="cursor: pointer" :class="{
+                  active: paginations.page === page,
+                }" @click="handleClickPage(page)">{{ page }}</a>
               </li>
-              <li
-                class="page-item"
-                :class="{
-                  disabled: currentPageGroup === newPagination.length - 1,
-                }"
-              >
-                <a
-                  class="page-link"
-                  style="cursor: pointer"
-                  href="#"
-                  @click="handleGotoNextGroupedPage"
-                  >...</a
-                >
+              <li class="page-item" :class="{
+                disabled: currentPageGroup === newPagination.length - 1,
+              }">
+                <a class="page-link" style="cursor: pointer" href="#" @click="handleGotoNextGroupedPage">...</a>
               </li>
-              <li
-                class="page-item"
-                v-if="
-                  paginations.page > 10 &&
-                  paginations.page < paginations.pageCount
-                "
-                :class="{
-                  'page-item': true,
-                }"
-              >
-                <a
-                  style="cursor: pointer"
-                  class="page-link"
-                  href="#"
-                  @click="handleClickPage(paginations.pageCount)"
-                  >{{ paginations.pageCount }}</a
-                >
+              <li class="page-item" v-if="
+                paginations.page > 10 &&
+                paginations.page < paginations.pageCount
+              " :class="{
+                'page-item': true,
+              }">
+                <a style="cursor: pointer" class="page-link" href="#" @click="handleClickPage(paginations.pageCount)">{{
+                  paginations.pageCount }}</a>
               </li>
-              <li
-                class="page-item"
-                :class="{
-                  'page-item': true,
-                  disabled: paginations.page === paginations.pageCount,
-                }"
-              >
-                <a
-                  style="cursor: pointer"
-                  class="page-link"
-                  href="#"
-                  @click="onNext"
-                  >Next</a
-                >
+              <li class="page-item" :class="{
+                'page-item': true,
+                disabled: paginations.page === paginations.pageCount,
+              }">
+                <a style="cursor: pointer" class="page-link" href="#" @click="onNext">Next</a>
               </li>
             </ul>
           </nav>
         </div>
       </div>
     </div>
-    <ViewActivityVue
-      v-if="showModalViewData"
-      :data="selectedData"
-      @close="handleClose()"
-    />
+    <ViewActivityVue v-if="showModalViewData" :data="selectedData" @close="handleClose()" />
   </div>
 </template>
