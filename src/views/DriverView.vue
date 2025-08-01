@@ -248,13 +248,15 @@ const handleUpdateDriver = (data) => {
               <div v-else>-</div>
             </td>
             <td>
-              <button class="btn" @click="handleViewDetails(driver)">
-                <font-awesome-icon :icon="['fas', 'list']" />
-              </button>
+              <div class="d-flex justify-content-end">
+                <button class="btn" @click="handleViewDetails(driver)">
+                  <font-awesome-icon :icon="['fas', 'list']" />
+                </button>
 
-              <button class="btn" @click="handleUpdateDriver(driver)">
-                <font-awesome-icon :icon="['fas', 'pen-to-square']" />
-              </button>
+                <button class="btn" @click="handleUpdateDriver(driver)">
+                  <font-awesome-icon :icon="['fas', 'pen-to-square']" />
+                </button>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -394,5 +396,6 @@ const handleUpdateDriver = (data) => {
 .box-image {
   width: 60px;
   height: 60px;
+  box-shadow: 0px 0px 6px #c9c9c924;
 }
 </style>
